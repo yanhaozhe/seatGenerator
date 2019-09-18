@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SeatGenerator:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/SeatGenerator_jar</output-path>
+    <root id="archive" name="SeatGenerator.jar">
+      <element id="module-output" name="SeatGenerator" />
+    </root>
+  </artifact>
+</component>
