@@ -13,7 +13,7 @@ public class GUI extends JFrame {
     private final int height = 600;
     private final int width = 800;
     private final String name = "Random Seat Generator";
-    private final String version = "1.0.2";
+    private final String version = "1.0.3";
 
     private JPanel menuPanel;
     private JMenuBar menuBar;
@@ -117,7 +117,6 @@ public class GUI extends JFrame {
     private void addComboBoxes(){
         buttonPanel = new JPanel();
 
-        //buttonPanel.setPreferredSize(new Dimension(50,60));
         buttonPanel.setBounds(separateLength, separateLength, width, narrowHeight);
 
         JLabel rowLabel = new JLabel("row: ");
@@ -146,6 +145,7 @@ public class GUI extends JFrame {
     private void addButtonsLogic(){
         addImportLogic();
         addStartLogic();
+        addClearLogic();
     }
 
     private void addImportLogic(){
@@ -172,6 +172,26 @@ public class GUI extends JFrame {
                 catch (Exception ex){
                     ex.printStackTrace();
                 }
+            }
+        });
+    }
+
+    private void addClearLogic(){
+        clearButton.addActionListener(e -> {
+            try{
+                numStudents = -1;
+                nameStudents.clear();
+                fileInfoLabel.setText("Info: No file chosen.");
+
+                JOptionPane.showMessageDialog(this, "Cleared Successfully.");
+            }
+
+            catch (Exception ex){
+                System.out.println("Exception Caught.");
+
+                JOptionPane.showMessageDialog(this, "Failed to clear the information, please try again.");
+
+                ex.printStackTrace();
             }
         });
     }
@@ -271,15 +291,16 @@ public class GUI extends JFrame {
                 for(int i = 0; i < row; i++)
                     for(int j=0; j < column; j++){
                         int index = i * column + j;
-                        if(null != permutation && index < numStudents)
+                        if(null != permutation && index < numStudents) {
                             seatLabels[i][j].setText(nameStudents.get(permutation[index]));
-                            try{
-                                Thread.sleep(500);
-                            }
-
-                            catch (InterruptedException ex){
+                            try {
+                                Thread.sleep(250);
+                            } catch (InterruptedException ex) {
                                 ex.printStackTrace();
                             }
+                        }
+
+                        else break;
                     }
 
                 enableAll();
