@@ -22,7 +22,40 @@ public class FileReader {
             e.printStackTrace();
         }
 
-
         return res;
+    }
+
+    public static int[][] readRules(File fp, int n){
+        if(fp == null || !fp.exists()){
+            System.out.println("Cannot read file " + fp.getName());
+            return null;
+        }
+
+        int[][] ans = new int[n][n];
+
+        try{
+            Scanner sc = new Scanner(fp);
+
+            while(sc.hasNextInt()) {
+                int a, b;
+
+                a = sc.nextInt();
+                if (sc.hasNextInt())
+                    b = sc.nextInt();
+                else break;
+
+                ans[a][b] = ans[b][a] = 1;
+            }
+        }
+
+        catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+        finally {
+            System.out.println("OK");
+        }
+
+        return ans;
     }
 }

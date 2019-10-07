@@ -13,7 +13,9 @@ public class GUI extends JFrame {
     private final int height = 600;
     private final int width = 800;
     private final String name = "Random Seat Generator";
-    private final String version = "1.0.3";
+    private final String version = "1.0.4";
+    private final String defaultAllowList = "allowList.txt";
+    private final String defaultBanList = "banList.txt";
 
     private JPanel menuPanel;
     private JMenuBar menuBar;
@@ -31,6 +33,8 @@ public class GUI extends JFrame {
 
     private JComboBox rowComboBox;
     private JComboBox columnComboBox;
+    private JComboBox boysComboBox;
+    private JComboBox girlsComboBox;
 
     private JPanel seatPanel;
 
@@ -110,7 +114,6 @@ public class GUI extends JFrame {
         buttonPanel.add(importButton);
         buttonPanel.add(clearButton);
         buttonPanel.add(startButton);
-
         add(buttonPanel);
     }
 
@@ -123,6 +126,10 @@ public class GUI extends JFrame {
         rowComboBox = new JComboBox();
         JLabel columnLabel = new JLabel("column: ");
         columnComboBox = new JComboBox();
+        JLabel boysLabel = new JLabel("Boys: ");
+        boysComboBox = new JComboBox();
+        JLabel girlsLabel = new JLabel("Girls ");
+        girlsComboBox = new JComboBox();
 
         for(int i = 3; i <= 7; i++){
             rowComboBox.addItem(i);
@@ -130,6 +137,11 @@ public class GUI extends JFrame {
 
         for(int i = 6; i <= 10; i++){
             columnComboBox.addItem(i);
+        }
+
+        for(int i = 0; i < 60; i++){
+            boysComboBox.addItem(i);
+            girlsComboBox.addItem(i);
         }
 
 
@@ -140,6 +152,12 @@ public class GUI extends JFrame {
         buttonPanel.add(columnLabel);
         buttonPanel.add(columnComboBox);
         columnComboBox.addActionListener(new myActionListener());
+        buttonPanel.add(boysLabel);
+        buttonPanel.add(boysComboBox);
+        buttonPanel.add(girlsLabel);
+        buttonPanel.add(girlsComboBox);
+
+
     }
 
     private void addButtonsLogic(){
@@ -257,10 +275,38 @@ public class GUI extends JFrame {
                     return;
             }
 
-            int[] permutation = RandomGenerator.randomPermutation(numStudents);
-            updateSeat(row, column, permutation);
 
+            File allowListFile, banListFile;
+            allowListFile = new File(defaultAllowList);
+            banListFile = new File(defaultBanList);
 
+            int[][] allowList = FileReader.readRules(allowListFile, numStudents);
+            int[][] banList = FileReader.readRules(banListFile, numStudents);
+
+            int boys = Integer.parseInt(boysComboBox.getSelectedItem().toString());
+            int girls = Integer.parseInt(girlsComboBox.getSelectedItem().toString());
+
+            System.out.println("Student: " + numStudents);
+            System.out.println("Boys: " + boys);
+            System.out.println("Girls: " + girls);
+
+            final int max_tries = 50;
+            int cur = 0;
+
+            int[] permutation = null;
+            while(cur < max_tries) {
+                permutation = RandomGenerator.randomPermutation(numStudents, row, column, true, true, boys, girls, allowList, banList);
+                if(permutation != null) break;
+                cur++;
+            }
+
+            if(permutation != null) {
+                updateSeat(row, column, permutation);
+            }
+
+            else{
+                JOptionPane.showMessageDialog(this, "Failed to generate seats due to too much constraints.");
+            }
         });
     }
 
@@ -285,7 +331,6 @@ public class GUI extends JFrame {
         Thread animationThread = new Thread () {
             @Override
             public void run() {
-
                 disableAll();
 
                 for(int i = 0; i < row; i++)
